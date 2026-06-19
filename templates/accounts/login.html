@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | AUTO-SERV{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-5">
+        <div class="form-card shadow-lg">
+            <div class="text-center mb-4">
+                <i class="fa-solid fa-user-lock fa-3x text-warning"></i>
+                <h3 class="fw-bold mt-2">Account Login</h3>
+                <p class="text-muted small">Access the Vehicle Service Management Portal</p>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="username" class="form-label fw-semibold">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" name="username" class="form-control" id="username" placeholder="Enter username" required>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="password" class="form-label fw-semibold">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                        <input type="password" name="password" class="form-control" id="password" placeholder="Enter password" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100 shadow-sm py-2">
+                    <i class="fa-solid fa-right-to-bracket me-2"></i>Sign In
+                </button>
+            </form>
+            
+            <div class="text-center mt-4 pt-3 border-top small text-muted">
+                New customer? <a href="{% url 'accounts:register' %}" class="text-warning fw-semibold">Create an Account</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

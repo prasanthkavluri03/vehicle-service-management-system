@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer Portal | AUTO-SERV{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="p-4 bg-gradient-primary rounded-3 text-white shadow-sm d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h2 class="fw-bold mb-1">Hello, {{ customer.customer_name }}!</h2>
+                <p class="mb-0 opacity-75">Welcome to your personal AUTO-SERV dashboard portal.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'vehicles:customer_vehicle_create' %}" class="btn btn-light text-primary fw-semibold shadow-sm">
+                    <i class="fa-solid fa-car-side me-2"></i>Register Vehicle
+                </a>
+                <a href="{% url 'appointment:customer_appointment_book' %}" class="btn btn-dark fw-semibold shadow-sm">
+                    <i class="fa-solid fa-calendar-plus me-2"></i>Book Service
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Vehicles Panel -->
+    <div class="col-lg-7 mb-4">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <h4 class="fw-bold mb-3"><i class="fa-solid fa-car text-warning me-2"></i>My Registered Vehicles</h4>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr class="text-muted small">
+                            <th>Plate #</th>
+                            <th>Brand / Model</th>
+                            <th>Year</th>
+                            <th>Fuel</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vehicle in vehicles %}
+                        <tr>
+                            <td class="fw-bold text-dark">{{ vehicle.vehicle_number }}</td>
+                            <td>{{ vehicle.brand }} {{ vehicle.model }}</td>
+                            <td>{{ vehicle.year }}</td>
+                            <td class="text-capitalize">{{ vehicle.fuel_type }}</td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-1">
+                                    <a href="{% url 'vehicles:customer_vehicle_detail' vehicle.pk %}" class="btn btn-sm btn-outline-primary" title="Service Logs">
+                                        <i class="fa-solid fa-clock-rotate-left"></i> History
+                                    </a>
+                                    <a href="{% url 'vehicles:customer_vehicle_update' vehicle.pk %}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <a href="{% url 'vehicles:customer_vehicle_delete' vehicle.pk %}" class="btn btn-sm btn-outline-danger" title="Delete">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <p class="mb-0 small">No vehicles registered yet. Click "Register Vehicle" to start.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contacts Summary -->
+    <div class="col-lg-5 mb-4">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <h4 class="fw-bold mb-3"><i class="fa-solid fa-id-card text-warning me-2"></i>Contact Details</h4>
+            <div class="pt-2">
+                <div class="mb-3 d-flex justify-content-between border-bottom pb-2">
+                    <span class="text-muted small">Full Name:</span>
+                    <span class="fw-semibold text-end">{{ customer.customer_name }}</span>
+                </div>
+                <div class="mb-3 d-flex justify-content-between border-bottom pb-2">
+                    <span class="text-muted small">Phone Number:</span>
+                    <span class="fw-semibold text-end">{{ customer.phone }}</span>
+                </div>
+                <div class="mb-3 d-flex justify-content-between border-bottom pb-2">
+                    <span class="text-muted small">Email Address:</span>
+                    <span class="fw-semibold text-end">{{ customer.email }}</span>
+                </div>
+                <div class="mb-3 d-flex justify-content-between border-bottom pb-2">
+                    <span class="text-muted small">Home Address:</span>
+                    <span class="fw-semibold text-end text-truncate" style="max-width: 200px;">{{ customer.address }}</span>
+                </div>
+                <a href="{% url 'accounts:profile' %}" class="btn btn-sm btn-outline-warning w-100 mt-2">
+                    <i class="fa-solid fa-user-edit me-2"></i>Edit Contact Info
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Appointments Panel -->
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <h4 class="fw-bold mb-3"><i class="fa-solid fa-calendar-check text-warning me-2"></i>My Service Bookings</h4>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr class="text-muted small">
+                            <th>Date & Time</th>
+                            <th>Vehicle</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appt in appointments %}
+                        <tr>
+                            <td class="small">{{ appt.appointment_date }}</td>
+                            <td class="fw-bold">{{ appt.vehicle.vehicle_number }}</td>
+                            <td class="text-capitalize small">{{ appt.get_service_type_display }}</td>
+                            <td>
+                                <span class="badge-status {{ appt.status }}">{{ appt.get_status_display }}</span>
+                            </td>
+                            <td class="text-end">
+                                {% if appt.status == 'pending' %}
+                                <a href="{% url 'appointment:customer_appointment_cancel' appt.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to cancel this booking?');">
+                                    Cancel
+                                </a>
+                                {% else %}
+                                <span class="text-muted small">N/A</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <p class="mb-0 small">No service appointments scheduled.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Invoice Panel -->
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <h4 class="fw-bold mb-3"><i class="fa-solid fa-receipt text-warning me-2"></i>My Bills & Invoices</h4>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr class="text-muted small">
+                            <th>Invoice #</th>
+                            <th>Date</th>
+                            <th>Total Due</th>
+                            <th>Payment Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inv in invoices %}
+                        <tr>
+                            <td class="fw-bold">#{{ inv.id }}</td>
+                            <td>{{ inv.invoice_date }}</td>
+                            <td class="fw-bold text-success">${{ inv.total_amount }}</td>
+                            <td>
+                                <span class="badge-status {{ inv.payment_status }}">{{ inv.get_payment_status_display }}</span>
+                            </td>
+                            <td class="text-end">
+                                <a href="{% url 'billing:invoice_detail' inv.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa-solid fa-eye me-1"></i>View
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <p class="mb-0 small">No billing records generated yet.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Invoice | AUTO-SERV{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6 text-center">
+        <div class="card border-0 shadow-lg p-5">
+            <i class="fa-solid fa-triangle-exclamation fa-4x text-danger mb-4"></i>
+            <h3 class="fw-bold text-dark mb-3">Delete Invoice Record?</h3>
+            <p class="text-muted mb-4">
+                Are you sure you want to delete invoice <strong>#{{ invoice.id }}</strong> of date <strong>{{ invoice.invoice_date }}</strong>? 
+                This action is permanent and cannot be undone.
+            </p>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-danger py-2">
+                        <i class="fa-solid fa-trash me-2"></i>Delete Invoice
+                    </button>
+                    <a href="{% url 'billing:invoice_detail' invoice.pk %}" class="btn btn-outline-secondary py-2">Cancel & Go Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

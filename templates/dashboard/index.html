@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard | AUTO-SERV{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold mb-1"><i class="fa-solid fa-chart-pie text-warning me-2"></i>Admin Dashboard</h2>
+        <p class="text-muted small">Center analytics, revenues, workshop workloads, and client operations at a glance</p>
+    </div>
+</div>
+
+<!-- KPI Indicators -->
+<div class="row mb-4 g-3">
+    <!-- Customers -->
+    <div class="col-md-6 col-lg-3">
+        <div class="dashboard-card card-accent-blue">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Total Customers</span>
+                    <div class="dashboard-color-accent text-primary">{{ total_customers }}</div>
+                </div>
+                <div class="bg-light rounded p-3 text-primary"><i class="fa-solid fa-users fa-2x"></i></div>
+            </div>
+            <div class="mt-2 small text-muted">Active client registry accounts</div>
+        </div>
+    </div>
+    
+    <!-- Vehicles -->
+    <div class="col-md-6 col-lg-3">
+        <div class="dashboard-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Total Vehicles</span>
+                    <div class="dashboard-color-accent text-warning">{{ total_vehicles }}</div>
+                </div>
+                <div class="bg-light rounded p-3 text-warning"><i class="fa-solid fa-car fa-2x"></i></div>
+            </div>
+            <div class="mt-2 small text-muted">Registered vehicles in database</div>
+        </div>
+    </div>
+    
+    <!-- Appointments -->
+    <div class="col-md-6 col-lg-3">
+        <div class="dashboard-card card-accent-green">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Total Appointments</span>
+                    <div class="dashboard-color-accent text-success">{{ total_appointments }}</div>
+                </div>
+                <div class="bg-light rounded p-3 text-success"><i class="fa-solid fa-calendar-check fa-2x"></i></div>
+            </div>
+            <div class="mt-2 small text-muted">All bookings recorded</div>
+        </div>
+    </div>
+    
+    <!-- Revenue -->
+    <div class="col-md-6 col-lg-3">
+        <div class="dashboard-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Total Revenue</span>
+                    <div class="dashboard-color-accent text-success">${{ total_revenue }}</div>
+                </div>
+                <div class="bg-light rounded p-3 text-success"><i class="fa-solid fa-sack-dollar fa-2x"></i></div>
+            </div>
+            <div class="mt-2 small text-muted">Summation of paid service invoices</div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Panel -->
+<div class="row mb-4 g-4">
+    <!-- Revenue Line Chart -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-line text-warning me-2"></i>Monthly Revenue Progress (Paid Invoices)</h5>
+            <div style="position: relative; height:300px; width:100%">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Appointments Status Distribution Doughnut Chart -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-pie text-warning me-2"></i>Appointment Statuses</h5>
+            <div style="position: relative; height:300px; width:100%">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activities Lists -->
+<div class="row g-4">
+    <!-- Recent Appointments -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0"><i class="fa-solid fa-clock text-warning me-2"></i>Recent Bookings</h5>
+                <a href="{% url 'appointment:appointment_list' %}" class="btn btn-sm btn-outline-dark">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle table-sm small">
+                    <thead>
+                        <tr class="text-muted">
+                            <th>Customer</th>
+                            <th>Vehicle</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appt in recent_appointments %}
+                        <tr>
+                            <td class="fw-semibold">{{ appt.customer.customer_name }}</td>
+                            <td>{{ appt.vehicle.vehicle_number }}</td>
+                            <td>{{ appt.appointment_date|date:"M d, H:i" }}</td>
+                            <td><span class="badge-status {{ appt.status }}">{{ appt.get_status_display }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-3 text-muted">No appointments booked.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Services -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0"><i class="fa-solid fa-screwdriver-wrench text-warning me-2"></i>Recent Service Logs</h5>
+                <a href="{% url 'services:service_list' %}" class="btn btn-sm btn-outline-dark">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle table-sm small">
+                    <thead>
+                        <tr class="text-muted">
+                            <th>Vehicle</th>
+                            <th>Technician</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for svc in recent_services %}
+                        <tr>
+                            <td class="fw-bold">{{ svc.vehicle.vehicle_number }}</td>
+                            <td>{{ svc.technician.name }}</td>
+                            <td>{{ svc.service_date }}</td>
+                            <td><span class="badge-status {{ svc.status }}">{{ svc.get_status_display }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-3 text-muted">No service records registered.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- ChartJS Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Extract JSON variables passed from view
+    const revenueData = JSON.parse('{{ revenue_data_json|escapejs }}');
+    const monthsLabels = JSON.parse('{{ months_labels_json|escapejs }}');
+    const statusCounts = JSON.parse('{{ status_counts_json|escapejs }}');
+    const statusLabels = JSON.parse('{{ status_labels_json|escapejs }}');
+
+    // Chart 1: Revenue Line Chart
+    const revCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revCtx, {
+        type: 'line',
+        data: {
+            labels: monthsLabels,
+            datasets: [{
+                label: 'Monthly Revenue ($)',
+                data: revenueData,
+                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                borderColor: '#f97316',
+                borderWidth: 3,
+                tension: 0.3,
+                fill: true,
+                pointBackgroundColor: '#ea580c',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#e2e8f0' }
+                },
+                x: { grid: { display: false } }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    // Chart 2: Appointment Statuses Doughnut Chart
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusCounts,
+                backgroundColor: [
+                    '#f59e0b', // Pending (Amber)
+                    '#3b82f6', // Approved (Blue)
+                    '#0284c7', // In Progress (Sky)
+                    '#10b981', // Completed (Emerald)
+                    '#ef4444'  // Cancelled (Red)
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } }
+            }
+        }
+    });
+</script>
+{% endblock %}

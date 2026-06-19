@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Service Records | AUTO-SERV{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold"><i class="fa-solid fa-screwdriver-wrench text-warning me-2"></i>Service Directory</h2>
+        <p class="text-muted small">Monitor active workshops, log repair actions, and manage job cards</p>
+    </div>
+    <a href="{% url 'services:service_create' %}" class="btn btn-primary shadow-sm">
+        <i class="fa-solid fa-plus me-2"></i>New Service Record
+    </a>
+</div>
+
+<!-- Filters Bar -->
+<div class="card border-0 shadow-sm p-4 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <!-- Filter Tabs -->
+        <div class="d-flex gap-1 flex-wrap">
+            <a href="{% url 'services:service_list' %}" class="btn btn-sm {% if not status_filter %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                All
+            </a>
+            <a href="{% url 'services:service_list' %}?status=pending" class="btn btn-sm {% if status_filter == 'pending' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                Pending
+            </a>
+            <a href="{% url 'services:service_list' %}?status=ongoing" class="btn btn-sm {% if status_filter == 'ongoing' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                Ongoing / Active
+            </a>
+            <a href="{% url 'services:service_list' %}?status=completed" class="btn btn-sm {% if status_filter == 'completed' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                Completed
+            </a>
+        </div>
+        
+        <!-- Search -->
+        <form method="get" class="d-flex gap-2">
+            {% if status_filter %}
+            <input type="hidden" name="status" value="{{ status_filter }}">
+            {% endif %}
+            <input type="text" name="q" class="form-control form-control-sm" placeholder="Search vehicle, technician..." value="{{ query }}">
+            <button type="submit" class="btn btn-sm btn-secondary"><i class="fa-solid fa-search"></i></button>
+        </form>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="custom-table-card shadow-sm">
+    <div class="table-responsive">
+        <table class="table custom-table mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Service Date</th>
+                    <th>Vehicle Plate</th>
+                    <th>Assigned Technician</th>
+                    <th>Short Description</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for service in services %}
+                <tr>
+                    <td>{{ service.service_date }}</td>
+                    <td>
+                        <a href="{% url 'vehicles:vehicle_detail' service.vehicle.pk %}" class="fw-bold text-decoration-none text-dark">
+                            {{ service.vehicle.vehicle_number }}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="fw-semibold"><i class="fa-solid fa-user-gear text-muted me-1"></i> {{ service.technician.name }}</span>
+                    </td>
+                    <td><span class="text-muted d-inline-block text-truncate" style="max-width: 250px;">{{ service.description }}</span></td>
+                    <td>
+                        <span class="badge-status {{ service.status }}">{{ service.get_status_display }}</span>
+                    </td>
+                    <td class="text-end">
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{% url 'services:service_detail' service.pk %}" class="btn btn-sm btn-outline-primary" title="Job Card">
+                                <i class="fa-solid fa-file-invoice"></i> View
+                            </a>
+                            <a href="{% url 'services:service_update' service.pk %}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </a>
+                            {% if user.role == 'admin' or user.role == 'service_advisor' %}
+                            <a href="{% url 'services:service_delete' service.pk %}" class="btn btn-sm btn-outline-danger" title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-circle-info fa-2x mb-2"></i>
+                        <p class="mb-0">No service records registered in this category.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

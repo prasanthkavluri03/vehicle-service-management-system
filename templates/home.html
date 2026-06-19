@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AUTO-SERV | Premium Vehicle Service Management{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center min-vh-75 py-5">
+    <div class="col-lg-6 mb-5 mb-lg-0">
+        <h1 class="display-4 fw-extrabold text-dark lh-sm mb-3">
+            Premium Automotive Services, <span class="text-warning">Managed Smarter.</span>
+        </h1>
+        <p class="lead text-muted mb-4">
+            Book service appointments, track repairs in real-time, view detailed job cards, and manage billing effortlessly. AUTO-SERV makes vehicle maintenance simple and transparent.
+        </p>
+        <div class="d-flex gap-3">
+            <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg shadow-sm">
+                <i class="fa-solid fa-user-plus me-2"></i>Get Started / Sign Up
+            </a>
+            <a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-lg shadow-sm">
+                <i class="fa-solid fa-right-to-bracket me-2"></i>Customer Login
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-5 offset-lg-1 text-center">
+        <!-- Render a beautiful stylized visual element instead of placeholder image -->
+        <div class="p-5 bg-gradient-primary rounded-5 shadow-lg text-white">
+            <i class="fa-solid fa-car-wrench fa-10x mb-4 text-white opacity-75"></i>
+            <h3>Track Your Service</h3>
+            <p class="small opacity-75 mb-0">Registered customer? Log in to monitor job card progress in real-time.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5 py-5 border-top">
+    <div class="col-md-4 mb-4">
+        <div class="card border-0 bg-transparent text-center p-3">
+            <div class="mx-auto bg-light rounded-circle p-3 mb-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                <i class="fa-solid fa-calendar-check text-warning fa-2x"></i>
+            </div>
+            <h5>Online Service Booking</h5>
+            <p class="text-muted small">Choose your service type, set your date and vehicle details, and secure slots in minutes.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card border-0 bg-transparent text-center p-3">
+            <div class="mx-auto bg-light rounded-circle p-3 mb-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                <i class="fa-solid fa-user-gear text-warning fa-2x"></i>
+            </div>
+            <h5>Expert Technicians</h5>
+            <p class="text-muted small">Top specialists are assigned to your service log to guarantee high quality mechanical checkups.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card border-0 bg-transparent text-center p-3">
+            <div class="mx-auto bg-light rounded-circle p-3 mb-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                <i class="fa-solid fa-file-invoice-dollar text-warning fa-2x"></i>
+            </div>
+            <h5>Transparent Billing</h5>
+            <p class="text-muted small">Digital invoice itemizations mapping base charges, parts consumed, and status.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

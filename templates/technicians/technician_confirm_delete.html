@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Technician | AUTO-SERV{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6 text-center">
+        <div class="card border-0 shadow-lg p-5">
+            <i class="fa-solid fa-triangle-exclamation fa-4x text-danger mb-4"></i>
+            <h3 class="fw-bold text-dark mb-3">Remove Technician?</h3>
+            <p class="text-muted mb-4">
+                Are you sure you want to delete technician <strong>{{ technician.name }}</strong>? 
+                Deleting this technician record removes them from the active service directory. This action is permanent.
+            </p>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-danger py-2">
+                        <i class="fa-solid fa-trash me-2"></i>Delete Technician
+                    </button>
+                    <a href="{% url 'technicians:technician_list' %}" class="btn btn-outline-secondary py-2">Cancel & Go Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

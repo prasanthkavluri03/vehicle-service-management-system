@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Spare Parts Inventory | AUTO-SERV{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold"><i class="fa-solid fa-warehouse text-warning me-2"></i>Spare Parts Inventory</h2>
+        <p class="text-muted small">Monitor spare parts stock counts, supplier coordinates, and receive low-stock notifications</p>
+    </div>
+    <div class="d-flex gap-2">
+        {% if user.role == 'admin' or user.role == 'service_advisor' %}
+        <a href="{% url 'inventory:parts_usage_history' %}" class="btn btn-outline-secondary shadow-sm">
+            <i class="fa-solid fa-clock-rotate-left me-2"></i>Usage History
+        </a>
+        <a href="{% url 'inventory:part_create' %}" class="btn btn-primary shadow-sm">
+            <i class="fa-solid fa-plus me-2"></i>Add Spare Part
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Low Stock Alerts Widget -->
+{% if low_stock_count > 0 %}
+<div class="alert alert-warning border-0 shadow-sm d-flex align-items-center justify-content-between py-3 px-4 mb-4">
+    <div>
+        <i class="fa-solid fa-triangle-exclamation fa-lg me-2 text-warning"></i>
+        <span>There are currently <strong>{{ low_stock_count }}</strong> items in inventory running low on stock (&le; 10 units).</span>
+    </div>
+    <a href="{% url 'inventory:part_list' %}?low_stock=true" class="btn btn-sm btn-warning text-dark fw-bold">View Low Stock</a>
+</div>
+{% endif %}
+
+<!-- Filters Bar -->
+<div class="card border-0 shadow-sm p-4 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <!-- Filter Tabs -->
+        <div class="d-flex gap-1">
+            <a href="{% url 'inventory:part_list' %}" class="btn btn-sm {% if not filter_low_stock %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                All Inventory
+            </a>
+            <a href="{% url 'inventory:part_list' %}?low_stock=true" class="btn btn-sm {% if filter_low_stock == 'true' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                Low Stock (&le; 10)
+            </a>
+        </div>
+        
+        <!-- Search -->
+        <form method="get" class="d-flex gap-2">
+            {% if filter_low_stock %}
+            <input type="hidden" name="low_stock" value="{{ filter_low_stock }}">
+            {% endif %}
+            <input type="text" name="q" class="form-control form-control-sm" placeholder="Search part name, supplier..." value="{{ query }}">
+            <button type="submit" class="btn btn-sm btn-secondary"><i class="fa-solid fa-search"></i></button>
+        </form>
+    </div>
+</div>
+
+<!-- Spare Parts Table -->
+<div class="custom-table-card shadow-sm">
+    <div class="table-responsive">
+        <table class="table custom-table mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Spare Part Name</th>
+                    <th>Stock Available</th>
+                    <th>Unit cost</th>
+                    <th>Supplier Reference</th>
+                    {% if user.role == 'admin' or user.role == 'service_advisor' %}
+                    <th class="text-end">Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for part in parts %}
+                <tr class="{% if part.quantity <= 10 %}table-danger-light{% endif %}" style="{% if part.quantity <= 10 %}background-color: #fff1f2;{% endif %}">
+                    <td class="fw-semibold">
+                        {{ part.part_name }}
+                        {% if part.quantity <= 10 %}
+                        <span class="badge bg-danger ms-2">Low Stock</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="fw-bold">{{ part.quantity }} units</span>
+                    </td>
+                    <td class="fw-bold text-success">${{ part.price }}</td>
+                    <td>{{ part.supplier|default:"-" }}</td>
+                    {% if user.role == 'admin' or user.role == 'service_advisor' %}
+                    <td class="text-end">
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{% url 'inventory:part_update' part.pk %}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </a>
+                            <a href="{% url 'inventory:part_delete' part.pk %}" class="btn btn-sm btn-outline-danger" title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-circle-info fa-2x mb-2"></i>
+                        <p class="mb-0">No spare parts in database matching filter parameters.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

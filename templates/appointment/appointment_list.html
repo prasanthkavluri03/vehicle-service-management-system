@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Appointments | AUTO-SERV{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold"><i class="fa-solid fa-calendar-check text-warning me-2"></i>Service Appointments</h2>
+        <p class="text-muted small">Manage client service bookings, verify details, and allocate work</p>
+    </div>
+    <a href="{% url 'appointment:appointment_create' %}" class="btn btn-primary shadow-sm">
+        <i class="fa-solid fa-plus me-2"></i>New Appointment
+    </a>
+</div>
+
+<!-- Filters Bar -->
+<div class="card border-0 shadow-sm p-4 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <!-- Filter Tabs -->
+        <div class="d-flex gap-1 flex-wrap">
+            <a href="{% url 'appointment:appointment_list' %}" class="btn btn-sm {% if not status_filter %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                All
+            </a>
+            <a href="{% url 'appointment:appointment_list' %}?status=pending" class="btn btn-sm {% if status_filter == 'pending' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                Pending Approval
+            </a>
+            <a href="{% url 'appointment:appointment_list' %}?status=approved" class="btn btn-sm {% if status_filter == 'approved' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                Approved
+            </a>
+            <a href="{% url 'appointment:appointment_list' %}?status=in_progress" class="btn btn-sm {% if status_filter == 'in_progress' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                In Progress
+            </a>
+            <a href="{% url 'appointment:appointment_list' %}?status=completed" class="btn btn-sm {% if status_filter == 'completed' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                Completed
+            </a>
+            <a href="{% url 'appointment:appointment_list' %}?status=cancelled" class="btn btn-sm {% if status_filter == 'cancelled' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                Cancelled
+            </a>
+        </div>
+        
+        <!-- Search -->
+        <form method="get" class="d-flex gap-2">
+            {% if status_filter %}
+            <input type="hidden" name="status" value="{{ status_filter }}">
+            {% endif %}
+            <input type="text" name="q" class="form-control form-control-sm" placeholder="Search customer, vehicle..." value="{{ query }}">
+            <button type="submit" class="btn btn-sm btn-secondary"><i class="fa-solid fa-search"></i></button>
+        </form>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="custom-table-card shadow-sm">
+    <div class="table-responsive">
+        <table class="table custom-table mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Vehicle</th>
+                    <th>Date & Time</th>
+                    <th>Service Type</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in appointments %}
+                <tr>
+                    <td>
+                        <a href="{% url 'customers:customer_detail' appt.customer.pk %}" class="fw-bold text-decoration-none text-dark">
+                            {{ appt.customer.customer_name }}
+                        </a>
+                    </td>
+                    <td class="fw-bold">{{ appt.vehicle.vehicle_number }}</td>
+                    <td>{{ appt.appointment_date }}</td>
+                    <td class="text-capitalize">{{ appt.get_service_type_display }}</td>
+                    <td>
+                        <span class="badge-status {{ appt.status }}">{{ appt.get_status_display }}</span>
+                    </td>
+                    <td class="text-end">
+                        <div class="d-flex justify-content-end gap-2">
+                            {% if appt.status == 'pending' %}
+                            <a href="{% url 'appointment:appointment_approve' appt.pk %}" class="btn btn-sm btn-success" title="Approve Service">
+                                <i class="fa-solid fa-check me-1"></i> Approve
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'appointment:appointment_update' appt.pk %}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </a>
+                            <a href="{% url 'appointment:appointment_delete' appt.pk %}" class="btn btn-sm btn-outline-danger" title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-circle-info fa-2x mb-2"></i>
+                        <p class="mb-0">No appointments logged in this category.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer Profile: {{ customer.customer_name }} | AUTO-SERV{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold"><i class="fa-solid fa-address-book text-warning me-2"></i>Customer File</h2>
+        <p class="text-muted small">Overview of customer profile, assets, and service history</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'customers:customer_update' customer.pk %}" class="btn btn-outline-primary shadow-sm">
+            <i class="fa-solid fa-pen-to-square me-2"></i>Edit Profile
+        </a>
+        <a href="{% url 'customers:customer_list' %}" class="btn btn-secondary shadow-sm">
+            <i class="fa-solid fa-arrow-left me-2"></i>Back to Directory
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Customer Info Card -->
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <div class="text-center mb-4">
+                <div class="bg-light rounded-circle p-4 d-inline-flex mb-3">
+                    <i class="fa-solid fa-user-tie fa-4x text-warning"></i>
+                </div>
+                <h4 class="fw-bold mb-1">{{ customer.customer_name }}</h4>
+                <span class="badge bg-dark">Registered Customer</span>
+            </div>
+            
+            <div class="border-top pt-3">
+                <div class="mb-3">
+                    <label class="text-muted small d-block">Phone Number</label>
+                    <span class="fw-semibold">{{ customer.phone }}</span>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small d-block">Email Address</label>
+                    <span class="fw-semibold">{{ customer.email }}</span>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small d-block">Home/Billing Address</label>
+                    <span class="fw-semibold">{{ customer.address }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tabbed Customer Activity Logs -->
+    <div class="col-lg-8 mb-4">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <ul class="nav nav-pills mb-4" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-vehicles-tab" data-bs-toggle="pill" data-bs-target="#pills-vehicles" type="button" role="tab" aria-controls="pills-vehicles" aria-selected="true">
+                        <i class="fa-solid fa-car me-2"></i>Vehicles ({{ vehicles.count }})
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-appointments-tab" data-bs-toggle="pill" data-bs-target="#pills-appointments" type="button" role="tab" aria-controls="pills-appointments" aria-selected="false">
+                        <i class="fa-solid fa-calendar-check me-2"></i>Appointments ({{ appointments.count }})
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-invoices-tab" data-bs-toggle="pill" data-bs-target="#pills-invoices" type="button" role="tab" aria-controls="pills-invoices" aria-selected="false">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> Invoices ({{ invoices.count }})
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="pills-tabContent">
+                <!-- Vehicles Tab -->
+                <div class="tab-pane fade show active" id="pills-vehicles" role="tabpanel" aria-labelledby="pills-vehicles-tab">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr class="text-muted small text-uppercase">
+                                    <th>Plate Number</th>
+                                    <th>Brand / Model</th>
+                                    <th>Year</th>
+                                    <th>Fuel Type</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vehicle in vehicles %}
+                                <tr>
+                                    <td class="fw-bold">{{ vehicle.vehicle_number }}</td>
+                                    <td>{{ vehicle.brand }} {{ vehicle.model }}</td>
+                                    <td>{{ vehicle.year }}</td>
+                                    <td class="text-capitalize">{{ vehicle.fuel_type }}</td>
+                                    <td class="text-end">
+                                        <a href="{% url 'vehicles:vehicle_detail' vehicle.pk %}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fa-solid fa-screwdriver-wrench me-1"></i>Service History
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">No vehicles registered.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Appointments Tab -->
+                <div class="tab-pane fade" id="pills-appointments" role="tabpanel" aria-labelledby="pills-appointments-tab">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr class="text-muted small text-uppercase">
+                                    <th>Date</th>
+                                    <th>Vehicle</th>
+                                    <th>Service Type</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appt in appointments %}
+                                <tr>
+                                    <td>{{ appt.appointment_date }}</td>
+                                    <td class="fw-bold">{{ appt.vehicle.vehicle_number }}</td>
+                                    <td class="text-capitalize">{{ appt.get_service_type_display }}</td>
+                                    <td>
+                                        <span class="badge-status {{ appt.status }}">{{ appt.get_status_display }}</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{% url 'appointment:appointment_update' appt.pk %}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fa-solid fa-pen"></i> Edit
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">No appointments booked.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Invoices Tab -->
+                <div class="tab-pane fade" id="pills-invoices" role="tabpanel" aria-labelledby="pills-invoices-tab">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr class="text-muted small text-uppercase">
+                                    <th>Invoice #</th>
+                                    <th>Date</th>
+                                    <th>Service Amount</th>
+                                    <th>Parts Amount</th>
+                                    <th>Total Due</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for inv in invoices %}
+                                <tr>
+                                    <td class="fw-bold">#{{ inv.id }}</td>
+                                    <td>{{ inv.invoice_date }}</td>
+                                    <td>${{ inv.service_charges }}</td>
+                                    <td>${{ inv.parts_charges }}</td>
+                                    <td class="fw-bold text-success">${{ inv.total_amount }}</td>
+                                    <td>
+                                        <span class="badge-status {{ inv.payment_status }}">{{ inv.get_payment_status_display }}</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{% url 'billing:invoice_detail' inv.pk %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fa-solid fa-file-invoice"></i> View Invoice
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">No invoices generated.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

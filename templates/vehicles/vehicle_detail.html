@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Vehicle History: {{ vehicle.vehicle_number }} | AUTO-SERV{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold"><i class="fa-solid fa-car-side text-warning me-2"></i>Vehicle File</h2>
+        <p class="text-muted small">Overview of vehicle specifications and comprehensive service history logs</p>
+    </div>
+    <div class="d-flex gap-2">
+        {% if user.role == 'customer' %}
+        <a href="{% url 'customers:customer_dashboard' %}" class="btn btn-secondary shadow-sm">
+            <i class="fa-solid fa-arrow-left me-2"></i>Back to Portal
+        </a>
+        {% else %}
+        <a href="{% url 'vehicles:vehicle_list' %}" class="btn btn-secondary shadow-sm">
+            <i class="fa-solid fa-arrow-left me-2"></i>Back to Registry
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <!-- Vehicle Specs Panel -->
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <div class="text-center mb-4 pb-3 border-bottom">
+                <div class="bg-light rounded-circle p-4 d-inline-flex mb-3">
+                    <i class="fa-solid fa-car fa-4x text-warning"></i>
+                </div>
+                <h4 class="fw-bold mb-1">{{ vehicle.brand }} {{ vehicle.model }}</h4>
+                <span class="badge bg-dark">{{ vehicle.vehicle_number }}</span>
+            </div>
+            
+            <div class="row pt-2">
+                <div class="col-6 mb-3">
+                    <label class="text-muted small d-block">Mfg. Year</label>
+                    <span class="fw-semibold text-dark">{{ vehicle.year }}</span>
+                </div>
+                <div class="col-6 mb-3">
+                    <label class="text-muted small d-block">Fuel Type</label>
+                    <span class="fw-semibold text-dark text-capitalize">{{ vehicle.fuel_type }}</span>
+                </div>
+                <div class="col-12 mb-3">
+                    <label class="text-muted small d-block">Registered Owner</label>
+                    {% if user.role == 'customer' %}
+                    <span class="fw-semibold text-dark">{{ vehicle.customer.customer_name }}</span>
+                    {% else %}
+                    <a href="{% url 'customers:customer_detail' vehicle.customer.pk %}" class="fw-bold text-decoration-none text-primary">
+                        <i class="fa-solid fa-user me-1 text-muted"></i> {{ vehicle.customer.customer_name }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Service History Panel -->
+    <div class="col-lg-8 mb-4">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <h4 class="fw-bold mb-4"><i class="fa-solid fa-clock-rotate-left text-warning me-2"></i>Service History & Repairs</h4>
+            
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr class="text-muted small text-uppercase">
+                            <th>Date</th>
+                            <th>Technician</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in service_history %}
+                        <tr>
+                            <td>{{ record.service_date }}</td>
+                            <td>
+                                <span class="fw-semibold"><i class="fa-solid fa-user-gear text-muted me-1"></i> {{ record.technician.name }}</span>
+                            </td>
+                            <td>
+                                <span class="text-truncate d-inline-block" style="max-width: 250px;">{{ record.description }}</span>
+                            </td>
+                            <td>
+                                <span class="badge-status {{ record.status }}">{{ record.get_status_display }}</span>
+                            </td>
+                            <td class="text-end">
+                                <a href="{% url 'services:service_detail' record.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa-solid fa-file-lines me-1"></i>Job Card
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="fa-solid fa-screwdriver-wrench fa-2x mb-2"></i>
+                                <p class="mb-0">No service records registered for this vehicle.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

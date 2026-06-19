@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Technician Dashboard | AUTO-SERV{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="p-4 bg-gradient-primary rounded-3 text-white shadow-sm d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h2 class="fw-bold mb-1">Welcome back, {{ technician.name }}!</h2>
+                <p class="mb-0 opacity-75">Specialization: <strong>{{ technician.specialization }}</strong> | Experience: <strong>{{ technician.experience }} Years</strong></p>
+            </div>
+            <div>
+                <span class="badge bg-dark fs-6 py-2 px-3"><i class="fa-solid fa-spinner fa-spin me-2 text-warning"></i> {{ active_services.count }} Active Jobs</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Active Tasks -->
+    <div class="col-12 mb-4">
+        <div class="card border-0 shadow-sm p-4">
+            <h4 class="fw-bold mb-3"><i class="fa-solid fa-screwdriver-wrench text-warning me-2"></i>My Assigned Active Jobs</h4>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr class="text-muted small text-uppercase">
+                            <th>Date</th>
+                            <th>Vehicle Number</th>
+                            <th>Vehicle Specs</th>
+                            <th>Job Description</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in active_services %}
+                        <tr>
+                            <td>{{ record.service_date }}</td>
+                            <td class="fw-bold">{{ record.vehicle.vehicle_number }}</td>
+                            <td>{{ record.vehicle.brand }} {{ record.vehicle.model }} ({{ record.vehicle.year }})</td>
+                            <td><span class="text-truncate d-inline-block" style="max-width: 300px;">{{ record.description }}</span></td>
+                            <td>
+                                <span class="badge-status {{ record.status }}">{{ record.get_status_display }}</span>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{% url 'services:service_detail' record.pk %}" class="btn btn-sm btn-warning text-dark">
+                                        <i class="fa-solid fa-wrench me-1"></i> Update Job
+                                    </a>
+                                    <a href="{% url 'services:service_update' record.pk %}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fa-solid fa-pen"></i> Edit Detail
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                <i class="fa-solid fa-circle-check fa-2x mb-2 text-success"></i>
+                                <p class="mb-0">Excellent! You have no active repairs assigned to you right now.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Completed Tasks -->
+    <div class="col-12 mb-4">
+        <div class="card border-0 shadow-sm p-4">
+            <h4 class="fw-bold mb-3"><i class="fa-solid fa-clock-rotate-left text-warning me-2"></i>Completed Service Log History</h4>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr class="text-muted small text-uppercase">
+                            <th>Date</th>
+                            <th>Vehicle Plate</th>
+                            <th>Vehicle Specs</th>
+                            <th>Job Summary</th>
+                            <th>Status</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in completed_services %}
+                        <tr>
+                            <td>{{ record.service_date }}</td>
+                            <td class="fw-bold">{{ record.vehicle.vehicle_number }}</td>
+                            <td>{{ record.vehicle.brand }} {{ record.vehicle.model }}</td>
+                            <td><span class="text-truncate d-inline-block" style="max-width: 400px;">{{ record.description }}</span></td>
+                            <td>
+                                <span class="badge-status completed">{{ record.get_status_display }}</span>
+                            </td>
+                            <td class="text-end">
+                                <a href="{% url 'services:service_detail' record.pk %}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fa-solid fa-file-invoice me-1"></i>View Job Card
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No completed jobs found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

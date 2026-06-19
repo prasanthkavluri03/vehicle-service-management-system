@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Invoices | AUTO-SERV{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold"><i class="fa-solid fa-file-invoice-dollar text-warning me-2"></i>Invoices & Billing</h2>
+        <p class="text-muted small">Monitor service invoice charges, client payments, and track center revenues</p>
+    </div>
+    {% if user.role == 'admin' or user.role == 'service_advisor' %}
+    <a href="{% url 'billing:invoice_create' %}" class="btn btn-primary shadow-sm">
+        <i class="fa-solid fa-plus me-2"></i>Generate Invoice
+    </a>
+    {% endif %}
+</div>
+
+<!-- Filters Bar -->
+<div class="card border-0 shadow-sm p-4 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <!-- Filter Tabs -->
+        <div class="d-flex gap-1">
+            <a href="{% url 'billing:invoice_list' %}" class="btn btn-sm {% if not payment_status %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                All Invoices
+            </a>
+            <a href="{% url 'billing:invoice_list' %}?status=paid" class="btn btn-sm {% if payment_status == 'paid' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                Paid
+            </a>
+            <a href="{% url 'billing:invoice_list' %}?status=pending" class="btn btn-sm {% if payment_status == 'pending' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                Pending Payment
+            </a>
+        </div>
+        
+        <!-- Search -->
+        <form method="get" class="d-flex gap-2">
+            {% if payment_status %}
+            <input type="hidden" name="status" value="{{ payment_status }}">
+            {% endif %}
+            <input type="text" name="q" class="form-control form-control-sm" placeholder="Search invoice #, plate, customer..." value="{{ query }}">
+            <button type="submit" class="btn btn-sm btn-secondary"><i class="fa-solid fa-search"></i></button>
+        </form>
+    </div>
+</div>
+
+<!-- Invoices Table -->
+<div class="custom-table-card shadow-sm">
+    <div class="table-responsive">
+        <table class="table custom-table mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Invoice #</th>
+                    <th>Date</th>
+                    <th>Customer Name</th>
+                    <th>Vehicle Plate</th>
+                    <th>Service Fee</th>
+                    <th>Parts Fee</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inv in invoices %}
+                <tr>
+                    <td class="fw-bold">#{{ inv.id }}</td>
+                    <td>{{ inv.invoice_date }}</td>
+                    <td>
+                        {% if user.role == 'customer' %}
+                        <span class="fw-semibold text-dark">{{ inv.service_record.vehicle.customer.customer_name }}</span>
+                        {% else %}
+                        <a href="{% url 'customers:customer_detail' inv.service_record.vehicle.customer.pk %}" class="fw-semibold text-decoration-none text-dark">
+                            {{ inv.service_record.vehicle.customer.customer_name }}
+                        </a>
+                        {% endif %}
+                    </td>
+                    <td class="fw-bold text-dark">{{ inv.service_record.vehicle.vehicle_number }}</td>
+                    <td>${{ inv.service_charges }}</td>
+                    <td>${{ inv.parts_charges }}</td>
+                    <td class="fw-bold text-success">${{ inv.total_amount }}</td>
+                    <td>
+                        <span class="badge-status {{ inv.payment_status }}">{{ inv.get_payment_status_display }}</span>
+                    </td>
+                    <td class="text-end">
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{% url 'billing:invoice_detail' inv.pk %}" class="btn btn-sm btn-outline-primary" title="Details / Print">
+                                <i class="fa-solid fa-file-invoice"></i> View
+                            </a>
+                            {% if user.role == 'admin' or user.role == 'service_advisor' %}
+                                {% if inv.payment_status == 'pending' %}
+                                <a href="{% url 'billing:invoice_pay' inv.pk %}" class="btn btn-sm btn-success" title="Mark Paid">
+                                    <i class="fa-solid fa-check"></i> Pay
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'billing:invoice_delete' inv.pk %}" class="btn btn-sm btn-outline-danger" title="Delete">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-circle-info fa-2x mb-2"></i>
+                        <p class="mb-0">No invoices logged in this category.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
