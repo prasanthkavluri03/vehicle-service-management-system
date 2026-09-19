@@ -1,62 +1,111 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}AUTO-SERV | Premium Vehicle Service Management{% endblock %}
+{% block title %}AUTO-SERV | Next-Gen Automotive Service Management{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center align-items-center min-vh-75 py-5">
-    <div class="col-lg-6 mb-5 mb-lg-0">
-        <h1 class="display-4 fw-extrabold text-dark lh-sm mb-3">
-            Premium Automotive Services, <span class="text-warning">Managed Smarter.</span>
+<!-- Hero Section -->
+<div class="row align-items-center py-4 mb-4">
+    <div class="col-lg-6 mb-5 mb-lg-0 fade-in">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill" style="background: rgba(255, 107, 0, 0.1); border: 1px solid rgba(255, 107, 0, 0.25);">
+            <span class="status-dot dot-active"></span>
+            <span class="small fw-bold text-uppercase" style="color: var(--primary-color); letter-spacing: 0.08em; font-size: 0.76rem;">Intelligent Workshop OS 2.0</span>
+        </div>
+        
+        <h1 class="display-3 fw-bold text-dark lh-sm mb-3" style="font-family: 'Outfit', sans-serif;">
+            Precision Care for <br>
+            <span style="background: linear-gradient(135deg, #ff6b00 0%, #ea580c 50%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Elite Vehicles.</span>
         </h1>
-        <p class="lead text-muted mb-4">
-            Book service appointments, track repairs in real-time, view detailed job cards, and manage billing effortlessly. AUTO-SERV makes vehicle maintenance simple and transparent.
+        
+        <p class="lead text-muted mb-4 pe-lg-4" style="font-size: 1.15rem; line-height: 1.6;">
+            Elevate workshop performance with real-time digital job cards, transparent live tracking, intelligent inventory monitoring, and automated billing.
         </p>
-        <div class="d-flex gap-3">
-            <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg shadow-sm">
-                <i class="fa-solid fa-user-plus me-2"></i>Get Started / Sign Up
+        
+        <div class="d-flex flex-wrap gap-3 mb-4">
+            <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg shadow-sm px-4 py-3">
+                <i class="fa-solid fa-bolt me-2"></i>Get Started Free
             </a>
-            <a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-lg shadow-sm">
-                <i class="fa-solid fa-right-to-bracket me-2"></i>Customer Login
+            <a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-lg shadow-sm px-4 py-3">
+                <i class="fa-solid fa-right-to-bracket me-2"></i>Customer Portal
             </a>
         </div>
+        
+        <div class="d-flex align-items-center gap-4 pt-3 border-top" style="border-color: rgba(226, 232, 240, 0.8) !important;">
+            <div>
+                <h4 class="mb-0 fw-bold" style="color: var(--primary-color);">99.8%</h4>
+                <span class="small text-muted">Service Satisfaction</span>
+            </div>
+            <div class="vr" style="height: 35px; opacity: 0.2;"></div>
+            <div>
+                <h4 class="mb-0 fw-bold" style="color: var(--cyan-accent);">15,000+</h4>
+                <span class="small text-muted">Vehicles Managed</span>
+            </div>
+            <div class="vr" style="height: 35px; opacity: 0.2;"></div>
+            <div>
+                <h4 class="mb-0 fw-bold" style="color: var(--emerald-accent);"><i class="fa-solid fa-circle-check me-1"></i>Live</h4>
+                <span class="small text-muted">Real-Time Telemetry</span>
+            </div>
+        </div>
     </div>
-    <div class="col-lg-5 offset-lg-1 text-center">
-        <!-- Render a beautiful stylized visual element instead of placeholder image -->
-        <div class="p-5 bg-gradient-primary rounded-5 shadow-lg text-white">
-            <i class="fa-solid fa-car-wrench fa-10x mb-4 text-white opacity-75"></i>
-            <h3>Track Your Service</h3>
-            <p class="small opacity-75 mb-0">Registered customer? Log in to monitor job card progress in real-time.</p>
+    
+    <div class="col-lg-6 fade-in delay-2">
+        <div class="hero-banner-card position-relative">
+            <img src="{% static 'images/hero_car_service.jpg' %}" 
+                 alt="Next Generation Automotive Workshop" 
+                 class="hero-banner-image img-fluid rounded-4 shadow-lg" 
+                 style="width: 100%; height: 440px; object-fit: cover;">
+                 
+            <!-- Floating Live Status Badge -->
+            <div class="hero-floating-badge d-flex align-items-center gap-3">
+                <div class="feature-icon-wrapper mb-0" style="width: 46px; height: 46px; font-size: 1.2rem; background: rgba(255, 107, 0, 0.2);">
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+                <div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="status-dot dot-active"></span>
+                        <span class="fw-bold text-white small">AI Diagnostic Bay 04</span>
+                    </div>
+                    <div class="text-white-50 small" style="font-size: 0.78rem;">Inspection Completed &bull; 0 Faults</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="row mt-5 py-5 border-top">
-    <div class="col-md-4 mb-4">
-        <div class="card border-0 bg-transparent text-center p-3">
-            <div class="mx-auto bg-light rounded-circle p-3 mb-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
-                <i class="fa-solid fa-calendar-check text-warning fa-2x"></i>
+<!-- Feature Section -->
+<div class="row mt-4 pt-4 g-4">
+    <div class="col-12 text-center mb-2">
+        <span class="text-uppercase small fw-bold" style="color: var(--primary-color); letter-spacing: 0.1em;">Engineered For Performance</span>
+        <h2 class="fw-bold mt-1">Next-Level Workshop Capabilities</h2>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="feature-box-card">
+            <div class="feature-icon-wrapper">
+                <i class="fa-solid fa-calendar-check"></i>
             </div>
-            <h5>Online Service Booking</h5>
-            <p class="text-muted small">Choose your service type, set your date and vehicle details, and secure slots in minutes.</p>
+            <h5 class="fw-bold mb-2">Instant Service Booking</h5>
+            <p class="text-muted small mb-0">Book repair appointments, pick customized service packages, and choose priority diagnostic slots seamlessly.</p>
         </div>
     </div>
-    <div class="col-md-4 mb-4">
-        <div class="card border-0 bg-transparent text-center p-3">
-            <div class="mx-auto bg-light rounded-circle p-3 mb-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
-                <i class="fa-solid fa-user-gear text-warning fa-2x"></i>
+    
+    <div class="col-md-4">
+        <div class="feature-box-card">
+            <div class="feature-icon-wrapper">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
             </div>
-            <h5>Expert Technicians</h5>
-            <p class="text-muted small">Top specialists are assigned to your service log to guarantee high quality mechanical checkups.</p>
+            <h5 class="fw-bold mb-2">Certified Specialists</h5>
+            <p class="text-muted small mb-0">Master technicians assigned directly to vehicle job cards with real-time progress logging and milestone tracking.</p>
         </div>
     </div>
-    <div class="col-md-4 mb-4">
-        <div class="card border-0 bg-transparent text-center p-3">
-            <div class="mx-auto bg-light rounded-circle p-3 mb-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
-                <i class="fa-solid fa-file-invoice-dollar text-warning fa-2x"></i>
+    
+    <div class="col-md-4">
+        <div class="feature-box-card">
+            <div class="feature-icon-wrapper">
+                <i class="fa-solid fa-receipt"></i>
             </div>
-            <h5>Transparent Billing</h5>
-            <p class="text-muted small">Digital invoice itemizations mapping base charges, parts consumed, and status.</p>
+            <h5 class="fw-bold mb-2">Digital Transparent Invoicing</h5>
+            <p class="text-muted small mb-0">Clear itemized breakdown of OEM replacement parts, mechanical labor rates, and one-click PDF invoices.</p>
         </div>
     </div>
 </div>

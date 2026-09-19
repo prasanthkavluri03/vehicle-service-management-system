@@ -7,23 +7,26 @@
 <style>
   /* Page Header */
   .page-header {
-    background: linear-gradient(135deg, #1a1f36 0%, #2d3561 100%);
+    background: linear-gradient(135deg, #090d16 0%, #161f33 100%);
+    border: 1px solid rgba(255,107,0,.25);
     border-radius: 16px;
     padding: 28px 32px;
     margin-bottom: 28px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 8px 32px rgba(0,0,0,.35);
+    box-shadow: 0 12px 36px rgba(0,0,0,.35);
   }
-  .page-header h1 { font-size: 1.7rem; font-weight: 700; color: #e2e8f0; margin: 0; letter-spacing: -.3px; }
+  .page-header h1 { font-family: 'Outfit', sans-serif; font-size: 1.7rem; font-weight: 700; color: #f8fafc; margin: 0; letter-spacing: -.3px; }
   .page-header p  { color: #94a3b8; margin: 4px 0 0; font-size: .9rem; }
   .header-icon {
     width: 52px; height: 52px;
-    background: rgba(99,102,241,.25);
+    background: rgba(255,107,0,.18);
+    border: 1px solid rgba(255,107,0,.3);
     border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.4rem; color: #818cf8; flex-shrink: 0;
+    font-size: 1.4rem; color: #ff6b00; flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(255,107,0,.3);
   }
 
   /* Table Card */
@@ -108,7 +111,7 @@
 <!-- Page Header -->
 <div class="page-header">
   <div>
-    <h1><i class="fa-solid fa-users-gear me-2" style="color:#818cf8;"></i>User Account Management</h1>
+    <h1><i class="fa-solid fa-users-gear me-2 brand-gear" style="color:var(--primary-color);"></i>User Account Management</h1>
     <p>View all system user accounts, roles, and credential information.</p>
   </div>
   <div class="header-icon">
@@ -119,7 +122,7 @@
 <!-- Table Card -->
 <div class="table-card">
   <div class="card-toolbar">
-    <h5><i class="fa-solid fa-table-list me-2" style="color:#6366f1;"></i>All System Users &nbsp;<span class="badge" style="background:rgba(99,102,241,.2);color:#818cf8;font-size:.75rem;">{{ users|length }}</span></h5>
+    <h5><i class="fa-solid fa-table-list me-2" style="color:var(--primary-color);"></i>All System Users &nbsp;<span class="badge" style="background:rgba(255,107,0,.15);color:var(--primary-color);font-size:.75rem;">{{ users|length }}</span></h5>
     <input id="userSearch" type="text" class="search-box" placeholder="Search users..." oninput="filterUsers(this.value)">
   </div>
 

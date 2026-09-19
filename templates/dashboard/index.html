@@ -3,9 +3,9 @@
 {% block title %}Admin Dashboard | AUTO-SERV{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
+<div class="row mb-4 fade-in">
     <div class="col-12">
-        <h2 class="fw-bold mb-1"><i class="fa-solid fa-chart-pie text-warning me-2"></i>Admin Dashboard</h2>
+        <h2 class="fw-bold mb-1"><i class="fa-solid fa-chart-pie me-2" style="color: var(--primary-color);"></i>Admin Dashboard</h2>
         <p class="text-muted small">Center analytics, revenues, workshop workloads, and client operations at a glance</p>
     </div>
 </div>
@@ -13,56 +13,56 @@
 <!-- KPI Indicators -->
 <div class="row mb-4 g-3">
     <!-- Customers -->
-    <div class="col-md-6 col-lg-3">
+    <div class="col-md-6 col-lg-3 fade-in delay-1">
         <div class="dashboard-card card-accent-blue">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <span class="text-muted small text-uppercase fw-semibold">Total Customers</span>
-                    <div class="dashboard-color-accent text-primary">{{ total_customers }}</div>
+                    <div class="dashboard-color-accent" style="color: var(--cyan-accent);">{{ total_customers }}</div>
                 </div>
-                <div class="bg-light rounded p-3 text-primary"><i class="fa-solid fa-users fa-2x"></i></div>
+                <div class="rounded-3 p-3" style="background: rgba(6, 182, 212, 0.12); color: var(--cyan-accent);"><i class="fa-solid fa-users fa-2x"></i></div>
             </div>
             <div class="mt-2 small text-muted">Active client registry accounts</div>
         </div>
     </div>
     
     <!-- Vehicles -->
-    <div class="col-md-6 col-lg-3">
+    <div class="col-md-6 col-lg-3 fade-in delay-2">
         <div class="dashboard-card">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <span class="text-muted small text-uppercase fw-semibold">Total Vehicles</span>
-                    <div class="dashboard-color-accent text-warning">{{ total_vehicles }}</div>
+                    <div class="dashboard-color-accent" style="color: var(--primary-color);">{{ total_vehicles }}</div>
                 </div>
-                <div class="bg-light rounded p-3 text-warning"><i class="fa-solid fa-car fa-2x"></i></div>
+                <div class="rounded-3 p-3" style="background: rgba(255, 107, 0, 0.12); color: var(--primary-color);"><i class="fa-solid fa-car fa-2x"></i></div>
             </div>
             <div class="mt-2 small text-muted">Registered vehicles in database</div>
         </div>
     </div>
     
     <!-- Appointments -->
-    <div class="col-md-6 col-lg-3">
+    <div class="col-md-6 col-lg-3 fade-in delay-3">
         <div class="dashboard-card card-accent-green">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <span class="text-muted small text-uppercase fw-semibold">Total Appointments</span>
                     <div class="dashboard-color-accent text-success">{{ total_appointments }}</div>
                 </div>
-                <div class="bg-light rounded p-3 text-success"><i class="fa-solid fa-calendar-check fa-2x"></i></div>
+                <div class="rounded-3 p-3" style="background: rgba(16, 185, 129, 0.12); color: var(--emerald-accent);"><i class="fa-solid fa-calendar-check fa-2x"></i></div>
             </div>
             <div class="mt-2 small text-muted">All bookings recorded</div>
         </div>
     </div>
     
     <!-- Revenue -->
-    <div class="col-md-6 col-lg-3">
+    <div class="col-md-6 col-lg-3 fade-in delay-4">
         <div class="dashboard-card">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <span class="text-muted small text-uppercase fw-semibold">Total Revenue</span>
                     <div class="dashboard-color-accent text-success">${{ total_revenue }}</div>
                 </div>
-                <div class="bg-light rounded p-3 text-success"><i class="fa-solid fa-sack-dollar fa-2x"></i></div>
+                <div class="rounded-3 p-3" style="background: rgba(16, 185, 129, 0.12); color: var(--emerald-accent);"><i class="fa-solid fa-sack-dollar fa-2x"></i></div>
             </div>
             <div class="mt-2 small text-muted">Summation of paid service invoices</div>
         </div>

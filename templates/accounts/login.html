@@ -1,42 +1,71 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Login | AUTO-SERV{% endblock %}
+{% block title %}Account Access | AUTO-SERV{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center py-5">
-    <div class="col-md-5">
-        <div class="form-card shadow-lg">
-            <div class="text-center mb-4">
-                <i class="fa-solid fa-user-lock fa-3x text-warning"></i>
-                <h3 class="fw-bold mt-2">Account Login</h3>
-                <p class="text-muted small">Access the Vehicle Service Management Portal</p>
+<div class="row justify-content-center py-4 fade-in">
+    <div class="col-lg-10 col-xl-9">
+        <div class="auth-split-card row g-0">
+            <!-- Left Brand & Imagery Visual -->
+            <div class="col-md-5 auth-visual-side d-none d-md-flex" style="background-image: url('{% static 'images/auth_car_bg.jpg' %}');">
+                <div class="auth-visual-content">
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3" style="background: rgba(255, 107, 0, 0.2); border: 1px solid rgba(255, 107, 0, 0.4);">
+                        <i class="fa-solid fa-shield-halved" style="color: var(--primary-color);"></i>
+                        <span class="small fw-bold text-white text-uppercase" style="letter-spacing: 1px; font-size: 0.72rem;">Secure Portal</span>
+                    </div>
+                    <h3 class="fw-bold text-white mb-2" style="font-family: 'Outfit', sans-serif;">Precision Workshop Operations</h3>
+                    <p class="text-white-50 small mb-0">Authorized technician, advisor, and customer portal for comprehensive service logs and billing.</p>
+                </div>
+                
+                <div class="auth-visual-content">
+                    <div class="p-3 rounded-3" style="background: rgba(11, 15, 25, 0.75); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.12);">
+                        <div class="d-flex align-items-center gap-2 text-white small mb-1">
+                            <i class="fa-solid fa-bolt" style="color: var(--primary-color);"></i>
+                            <span class="fw-semibold">Real-Time Telemetry</span>
+                        </div>
+                        <span class="text-white-50" style="font-size: 0.75rem;">Instant updates broadcast across technician and customer logs.</span>
+                    </div>
+                </div>
             </div>
             
-            <form method="post">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="username" class="form-label fw-semibold">Username</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                        <input type="text" name="username" class="form-control" id="username" placeholder="Enter username" required>
-                    </div>
-                </div>
-                
+            <!-- Right Form Side -->
+            <div class="col-md-7 p-4 p-lg-5 bg-white d-flex flex-column justify-content-center">
                 <div class="mb-4">
-                    <label for="password" class="form-label fw-semibold">Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
-                        <input type="password" name="password" class="form-control" id="password" placeholder="Enter password" required>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="fa-solid fa-gear brand-gear fs-4"></i>
+                        <h3 class="fw-bold mb-0 text-dark" style="font-family: 'Outfit', sans-serif;">Account Login</h3>
                     </div>
+                    <p class="text-muted small">Enter your credentials to access the AUTO-SERV command center.</p>
                 </div>
                 
-                <button type="submit" class="btn btn-primary w-100 shadow-sm py-2">
-                    <i class="fa-solid fa-right-to-bracket me-2"></i>Sign In
-                </button>
-            </form>
-            
-            <div class="text-center mt-4 pt-3 border-top small text-muted">
-                New customer? <a href="{% url 'accounts:register' %}" class="text-warning fw-semibold">Create an Account</a>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-semibold small text-secondary">Username or Account ID</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                            <input type="text" name="username" class="form-control" id="username" placeholder="e.g. jdoe_admin" required autofocus>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-semibold small text-secondary">Security Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                            <input type="password" name="password" class="form-control" id="password" placeholder="Enter account password" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 py-3 shadow-sm">
+                        <i class="fa-solid fa-arrow-right-to-bracket me-2"></i>Sign In to Dashboard
+                    </button>
+                </form>
+                
+                <div class="text-center mt-4 pt-3 border-top small text-muted">
+                    New customer? 
+                    <a href="{% url 'accounts:register' %}" class="fw-bold text-decoration-none ms-1" style="color: var(--primary-color);">Create an Account</a>
+                </div>
             </div>
         </div>
     </div>
