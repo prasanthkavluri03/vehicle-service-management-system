@@ -4,6 +4,8 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import CustomUserCreationForm, UserProfileForm
+from .decorators import role_required
+from .models import User
 from customers.models import Customer
 
 # Custom login view utilizing standard template
@@ -112,3 +114,11 @@ def profile(request):
     else:
         form = UserProfileForm(instance=user)
     return render(request, 'accounts/profile.html', {'form': form})
+
+
+# Admin-only: List all system users and their credentials overview
+@login_required
+@role_required('admin')
+def user_list(request):
+    users = User.objects.all().order_by('role', 'username')
+    return render(request, 'accounts/user_list.html', {'users': users})

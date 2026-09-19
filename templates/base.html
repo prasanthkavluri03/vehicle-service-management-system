@@ -55,7 +55,10 @@
                 <a href="{% url 'billing:invoice_list' %}" class="nav-link {% if request.resolver_match.app_name == 'billing' %}active{% endif %}">
                     <i class="fa-solid fa-file-invoice-dollar"></i> Invoices / Bills
                 </a>
-                
+                <a href="{% url 'accounts:user_list' %}" class="nav-link {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}">
+                    <i class="fa-solid fa-users-gear"></i> User Accounts
+                </a>
+
                 <!-- TECHNICIAN SIDEBAR -->
                 {% elif user.role == 'technician' %}
                 <a href="{% url 'technicians:technician_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'technician_dashboard' %}active{% endif %}">

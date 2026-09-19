@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Accounts – AUTO-SERV Admin{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Page Header */
+  .page-header {
+    background: linear-gradient(135deg, #1a1f36 0%, #2d3561 100%);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 8px 32px rgba(0,0,0,.35);
+  }
+  .page-header h1 { font-size: 1.7rem; font-weight: 700; color: #e2e8f0; margin: 0; letter-spacing: -.3px; }
+  .page-header p  { color: #94a3b8; margin: 4px 0 0; font-size: .9rem; }
+  .header-icon {
+    width: 52px; height: 52px;
+    background: rgba(99,102,241,.25);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; color: #818cf8; flex-shrink: 0;
+  }
+
+  /* Table Card */
+  .table-card {
+    background: rgba(17,24,39,.9);
+    border: 1px solid rgba(99,102,241,.18);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,.4);
+  }
+  .card-toolbar {
+    padding: 18px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    flex-wrap: wrap; gap: 12px;
+  }
+  .card-toolbar h5 { color: #e2e8f0; font-weight: 600; margin: 0; font-size: 1rem; }
+  .search-box {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px; padding: 8px 14px;
+    color: #e2e8f0; font-size: .875rem; width: 220px;
+    outline: none; transition: border-color .2s;
+  }
+  .search-box::placeholder { color: #64748b; }
+  .search-box:focus { border-color: #6366f1; }
+
+  /* Table */
+  .users-table { width: 100%; border-collapse: collapse; }
+  .users-table thead th {
+    background: rgba(99,102,241,.12); color: #94a3b8;
+    font-size: .75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .07em; padding: 14px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.06); white-space: nowrap;
+  }
+  .users-table tbody tr { border-bottom: 1px solid rgba(255,255,255,.05); transition: background .15s; }
+  .users-table tbody tr:last-child { border-bottom: none; }
+  .users-table tbody tr:hover { background: rgba(99,102,241,.08); }
+  .users-table tbody td { padding: 14px 20px; color: #cbd5e1; font-size: .875rem; vertical-align: middle; }
+
+  /* Avatar */
+  .user-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .9rem; flex-shrink: 0;
+  }
+
+  /* Role Badges */
+  .role-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 11px; border-radius: 999px;
+    font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  }
+  .role-admin           { background: rgba(239,68,68,.18);  color: #f87171; border: 1px solid rgba(239,68,68,.35); }
+  .role-service_advisor { background: rgba(245,158,11,.18); color: #fbbf24; border: 1px solid rgba(245,158,11,.35); }
+  .role-technician      { background: rgba(59,130,246,.18); color: #60a5fa; border: 1px solid rgba(59,130,246,.35); }
+  .role-customer        { background: rgba(16,185,129,.18); color: #34d399; border: 1px solid rgba(16,185,129,.35); }
+
+  /* Status */
+  .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .dot-active   { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+  .dot-inactive { background: #6b7280; }
+
+  /* Password field */
+  .pw-field {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 8px; padding: 5px 10px;
+    font-family: monospace; font-size: .8rem; color: #64748b; min-width: 200px;
+  }
+  .pw-value { flex: 1; letter-spacing: .08em; overflow-wrap: anywhere; }
+  .pw-toggle {
+    background: none; border: none; color: #6366f1;
+    cursor: pointer; padding: 0; font-size: .9rem; transition: color .2s;
+  }
+  .pw-toggle:hover { color: #818cf8; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="page-header">
+  <div>
+    <h1><i class="fa-solid fa-users-gear me-2" style="color:#818cf8;"></i>User Account Management</h1>
+    <p>View all system user accounts, roles, and credential information.</p>
+  </div>
+  <div class="header-icon">
+    <i class="fa-solid fa-shield-halved"></i>
+  </div>
+</div>
+
+<!-- Table Card -->
+<div class="table-card">
+  <div class="card-toolbar">
+    <h5><i class="fa-solid fa-table-list me-2" style="color:#6366f1;"></i>All System Users &nbsp;<span class="badge" style="background:rgba(99,102,241,.2);color:#818cf8;font-size:.75rem;">{{ users|length }}</span></h5>
+    <input id="userSearch" type="text" class="search-box" placeholder="Search users..." oninput="filterUsers(this.value)">
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table class="users-table" id="usersTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>User</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Privileges</th>
+          <th>Status</th>
+          <th>Default Password</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr class="user-row">
+
+          <!-- Index -->
+          <td style="color:#475569;">{{ forloop.counter }}</td>
+
+          <!-- Avatar + Name -->
+          <td>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="user-avatar"
+                   style="background:{% if u.role == 'admin' %}rgba(239,68,68,.2){% elif u.role == 'technician' %}rgba(59,130,246,.2){% elif u.role == 'service_advisor' %}rgba(245,158,11,.2){% else %}rgba(16,185,129,.2){% endif %};">
+                <span style="color:{% if u.role == 'admin' %}#f87171{% elif u.role == 'technician' %}#60a5fa{% elif u.role == 'service_advisor' %}#fbbf24{% else %}#34d399{% endif %};">
+                  {{ u.first_name|slice:":1"|upper }}{{ u.last_name|slice:":1"|upper }}
+                </span>
+              </div>
+              <div>
+                <div style="font-weight:600;color:#e2e8f0;">
+                  {% if u.first_name or u.last_name %}
+                    {{ u.first_name }} {{ u.last_name }}
+                  {% else %}
+                    <span style="color:#475569;font-style:italic;">No Name</span>
+                  {% endif %}
+                </div>
+                {% if u.phone %}<div style="font-size:.75rem;color:#64748b;">{{ u.phone }}</div>{% endif %}
+              </div>
+            </div>
+          </td>
+
+          <!-- Username -->
+          <td>
+            <code style="background:rgba(99,102,241,.12);padding:3px 8px;border-radius:6px;color:#a5b4fc;font-size:.82rem;">{{ u.username }}</code>
+          </td>
+
+          <!-- Email -->
+          <td style="color:#94a3b8;">{{ u.email|default:"—" }}</td>
+
+          <!-- Role Badge -->
+          <td>
+            <span class="role-badge role-{{ u.role }}">
+              {% if u.role == 'admin' %}<i class="fa-solid fa-crown fa-xs"></i>
+              {% elif u.role == 'technician' %}<i class="fa-solid fa-wrench fa-xs"></i>
+              {% elif u.role == 'service_advisor' %}<i class="fa-solid fa-headset fa-xs"></i>
+              {% else %}<i class="fa-solid fa-user fa-xs"></i>{% endif %}
+              {{ u.get_role_display }}
+            </span>
+          </td>
+
+          <!-- Privileges -->
+          <td>
+            {% if u.is_superuser %}
+              <span style="color:#f87171;font-size:.78rem;font-weight:600;"><i class="fa-solid fa-star fa-xs me-1"></i>Superuser</span>
+            {% elif u.is_staff %}
+              <span style="color:#fbbf24;font-size:.78rem;font-weight:600;"><i class="fa-solid fa-check fa-xs me-1"></i>Staff</span>
+            {% else %}
+              <span style="color:#475569;font-size:.78rem;">—</span>
+            {% endif %}
+          </td>
+
+          <!-- Active Status -->
+          <td>
+            {% if u.is_active %}
+              <span><span class="status-dot dot-active"></span><span style="color:#4ade80;font-size:.8rem;">Active</span></span>
+            {% else %}
+              <span><span class="status-dot dot-inactive"></span><span style="color:#6b7280;font-size:.8rem;">Inactive</span></span>
+            {% endif %}
+          </td>
+
+          <!-- Password Reveal -->
+          <td>
+            <div class="pw-field">
+              <span class="pw-value" id="pw-val-{{ u.pk }}">&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;</span>
+              <button class="pw-toggle" title="Show / Hide password"
+                      onclick="togglePw({{ u.pk }}, '{{ u.username }}')">
+                <i class="fa-solid fa-eye" id="pw-icon-{{ u.pk }}"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" style="text-align:center;padding:60px;color:#475569;">
+            <i class="fa-solid fa-users-slash fa-2x" style="display:block;margin-bottom:12px;"></i>
+            No users found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Security Notice -->
+<div class="mt-4 p-3 rounded-3" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:#fbbf24;font-size:.82rem;">
+  <i class="fa-solid fa-triangle-exclamation me-2"></i>
+  <strong>Security Notice:</strong> The passwords displayed here are <em>default demo passwords</em>
+  set by <code style="color:#fde68a;">populate_data.py</code>
+  (<code style="color:#fde68a;">password123</code> for all seeded accounts).
+  Django stores passwords as secure hashes — this page only reveals the known demo values for convenience.
+  <strong>Change all passwords before deploying to production.</strong>
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+  // Known demo passwords keyed by username (from populate_data.py)
+  const DEMO_PASSWORDS = {
+    'customer1': 'password123',
+    'customer2': 'password123',
+    'tech1':     'password123',
+    'tech2':     'password123',
+    'advisor1':  'password123',
+    'admin':     '(set manually via createsuperuser)',
+  };
+
+  const revealed = {};
+
+  function togglePw(pk, username) {
+    const valEl  = document.getElementById('pw-val-'  + pk);
+    const iconEl = document.getElementById('pw-icon-' + pk);
+    if (revealed[pk]) {
+      valEl.innerHTML  = '&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;';
+      iconEl.className = 'fa-solid fa-eye';
+      revealed[pk]     = false;
+    } else {
+      valEl.textContent = DEMO_PASSWORDS[username] || '(not a seeded demo account)';
+      iconEl.className  = 'fa-solid fa-eye-slash';
+      revealed[pk]      = true;
+    }
+  }
+
+  function filterUsers(query) {
+    const q = query.toLowerCase();
+    document.querySelectorAll('.user-row').forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+</script>
+{% endblock %}
